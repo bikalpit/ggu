@@ -9,7 +9,7 @@ How to set Up Project
 #3. Go to application folder -> config -> config.php -> change your project : base_url
 
 Live Link
-https://ggu.broadview-innovations.com
+http://ggunew.bi-team.in
 
 
 #2. Set api access token
