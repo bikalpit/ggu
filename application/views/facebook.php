@@ -1,11 +1,12 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8">
 	<title>ADS</title>
-
+	
 	<style type="text/css">
 
 	::selection { background-color: #E13300; color: white; }
@@ -51,8 +52,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	<div class="col-md-12">
 	<h1>Facebook ADS </h1>	
 	<button class="btn btn-info" style="float:right;width:15%;margin-left:5%" onclick=updateToken()>Update Token</button>
-	<textarea class="form-control" rows="1" style="float:right;width:80%" placeholder="Enter Access Token" id="access_token">EAAE1ZCaRY1SsBAJpxZBWxwqFlxAZBMPdZCpog6FQXPAQeE9cAhoRiubCELCex23BaHMBZAuSt9Ja1ub0SGlMUsXUneZBmN3CV38vxUhAz0d1k4ZBAmnHZAOqLX8Am9rR3pGaWfodA2hKUx2OE6UVJegJrTuAyukB5azHERSYBfni1rnUcuMcak58szDMmesRiHctvwIrpaisvKNMF1PNvR8YVkNfhNcj6WQvwRXeZAYQUZCwZDZD</textarea>	
+	<textarea class="form-control" rows="1" style="float:right;width:80%" id="access_token_input" placeholder="Enter Access Token"></textarea>	
+	<input type="hidden" id="base" value="<?php echo base_url(); ?>">
+	<input type="hidden" id="access_token" value="<?php echo $token; ?>">
+	<span id="apierror" style="color:red;"></span>
 	</div>
+	
 	<table id="table_id" class="display">
 		<thead>
 			<tr>				
@@ -103,7 +108,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <script>	  
 	var table;
 	table = $('#table_id').DataTable();    
-		
+	var base_url = $('#base').val();	
 	var FBaccount_id='act_162497604140942';
 	/*var FBaccess_token='EAAE1ZCaRY1SsBADZCC5aNnm5sXxumGKZBEd4wtKMyjUnCz9n67Vr1u1Mj3tbOCnp1W1gYUjVmDa4XLqCZB8lgNrrxBJYlmKhA1619Ffm7wYd2WnZBD8rQoaOhy3fAuKjQwDAd7ZCKJRIoTLsfEU2oGdIZARKzyDZBzTkrlkpVvKuMn0VHZClFGUZCHuYwdjP9bkZCvq2LShPw64BgUZBzGXdvo5ingwQFsSXye9e8oQ6qtfuKwZDZD';*/
 	var FBaccess_token=$('#access_token').val();	
@@ -129,8 +134,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				$('#table_id').html('<h3>No are available</h3>');				
 			}
         },
-        error: function(jqXHR, textStatus, errorThrown) {
-           console.log(textStatus, errorThrown);		
+        error: function(ResError) {
+			$('#apierror').empty();
+			console.log(ResError.responseJSON.error.message);
+			$('#apierror').append(ResError.responseJSON.error.message);
         }
     });	
 	
@@ -165,7 +172,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 	function updateToken(){
 		console.log('upd');
-		var access_token=$('#access_token').val();
-		location.reload();
+		var access_token=$('#access_token_input').val();
+
+		$.ajax({
+           url: base_url+'Common/updatetoken',
+           type: 'POST',
+           data: {access_token: access_token},
+           success: function(data) {
+				if(data == "1")
+				{
+					location.reload();			
+				}
+				else
+				{
+					alert("Access token required.");
+				}
+           }
+        });
+		//location.reload();
 	}
 </script>
